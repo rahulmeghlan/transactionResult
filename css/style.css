@@ -1,0 +1,14 @@
+/*
+ This file contains the styling used in the the page
+*/
+.container {
+    margin: 0 auto;
+}
+
+table {
+    text-align: left;
+}
+
+th {
+    cursor: pointer;
+}
