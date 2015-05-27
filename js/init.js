@@ -2,13 +2,13 @@ var PayU = {};
 (function (ns, tempData) {
     //todo : rather than changing the origin value of data, store the value of data in another variable
     var data = tempData.slice();  // Save a copy of the data passed.
+    var selectedStatus = "all";
     /**
      *  init : This function is used to initialize the ns level variables and functions
      * */
     var init = function () {
         bindEvents();
         changeToDateType(data);
-        displayData(data);
         setSelectionTypes(data);
         pagination.createPages();
     };
@@ -18,8 +18,7 @@ var PayU = {};
     var bindEvents = function () {
         var isPaymentDesc = false,
             isDateDesc = false,
-            isAmountDesc = false,
-            selectedStatus = "all";
+            isAmountDesc = false;
 
         // handle click event on payment-id
         document.getElementById("payment-id").addEventListener("click", function () {
@@ -42,24 +41,23 @@ var PayU = {};
         // handle click event on payment-status
         document.getElementById("payment-status").addEventListener("change", function () {
             selectedStatus = this.value;
-            if (selectedStatus === "all") displayData(data);
-            else displayData(getFilteredData(data, selectedStatus));
+            displayData(getFilteredData(data, selectedStatus));
         }, false);
 
         // handle click event on pagination-count
         document.getElementById("pagination-pages").addEventListener("change", function () {
             pagination.itemsPerPage = parseInt(this.value);
-            pagination.nextResults();
+            pagination.nextResults(getFilteredData(data, selectedStatus));
         }, false);
 
         // handle click event on next pagination
         document.getElementById("prev").addEventListener("click", function () {
-            pagination.prevResults();
+            pagination.prevResults(getFilteredData(data, selectedStatus));
         }, false);
 
         // handle click event on prev pagination
         document.getElementById("next").addEventListener("click", function () {
-            pagination.nextResults();
+            pagination.nextResults(getFilteredData(data, selectedStatus));
         }, false);
     };
     /*
@@ -164,12 +162,12 @@ var PayU = {};
         setPaginationValues: function () {
             this.totalPages = this.totalItems / this.itemsPerPage;
         },
-        nextResults: function () {
+        nextResults: function (array) {
             var tempArr = [];
             var start = this.currentPage;
             var end = this.itemsPerPage + this.currentPage;
-            for (var i = this.currentPage; i < this.itemsPerPage + this.currentPage && i < this.totalItems; i++) {
-                tempArr.push(data[[i]]);
+            for (var i = this.currentPage; i < this.itemsPerPage + this.currentPage && i < getFilteredData(data, selectedStatus).length; i++) {
+                tempArr.push(array[i]);
             }
             console.log("Start ", start);
             console.log("End ", end);
@@ -179,14 +177,14 @@ var PayU = {};
             this.currentPage += this.itemsPerPage;
             displayData(tempArr);
         },
-        prevResults: function () {
+        prevResults: function (array) {
             var tempArr = [];
             if (!tempArr.length) return false;
             this.currentPage -= this.itemsPerPage;
             var start = this.currentPage;
             var end = this.itemsPerPage + this.currentPage;
             for (var i = this.itemsPerPage + this.currentPage; i > this.currentPage && i >= 0; i--) {
-                tempArr.push(data[[i]]);
+                tempArr.push(array[i]);
             }
             console.log("Start ", end);
             console.log("End ", start);
@@ -200,6 +198,7 @@ var PayU = {};
                 str += "<option value='" + (i + 1) + "'>" + (i + 1) + "</option> "
             }
             document.getElementById("pagination-pages").innerHTML = str;
+            pagination.nextResults(getFilteredData(data, selectedStatus));
         }
     };
     ns.initApp = init;
