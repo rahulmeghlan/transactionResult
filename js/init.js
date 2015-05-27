@@ -10,6 +10,7 @@ var PayU = {};
         changeToDateType(data);
         displayData(data);
         setSelectionTypes(data);
+        pagination.createPages();
     };
     /**
      *  bindEvents : This function is used to bind events
@@ -43,6 +44,22 @@ var PayU = {};
             selectedStatus = this.value;
             if (selectedStatus === "all") displayData(data);
             else displayData(getFilteredData(data, selectedStatus));
+        }, false);
+
+        // handle click event on pagination-count
+        document.getElementById("pagination-pages").addEventListener("change", function () {
+            pagination.itemsPerPage = parseInt(this.value);
+            pagination.nextResults();
+        }, false);
+
+        // handle click event on next pagination
+        document.getElementById("prev").addEventListener("click", function () {
+            pagination.prevResults();
+        }, false);
+
+        // handle click event on prev pagination
+        document.getElementById("next").addEventListener("click", function () {
+            pagination.nextResults();
         }, false);
     };
     /*
@@ -139,7 +156,7 @@ var PayU = {};
      * pagination : This is the pagination component
      * */
     var pagination = {
-        itemsPerPage: 10,
+        itemsPerPage: 1,
         totalItems: data.length,
         totalPages: 0,
         currentPage: 0,
@@ -147,21 +164,42 @@ var PayU = {};
         setPaginationValues: function () {
             this.totalPages = this.totalItems / this.itemsPerPage;
         },
-        currentResults: function () {
+        nextResults: function () {
             var tempArr = [];
-            var itemsPerPage = this.itemsPerPage;
             var start = this.currentPage;
-            var end = this.itemsPerPage + start ;
-            for (var i = start; i < end && i < this.totalItems; i++) {
+            var end = this.itemsPerPage + this.currentPage;
+            for (var i = this.currentPage; i < this.itemsPerPage + this.currentPage && i < this.totalItems; i++) {
                 tempArr.push(data[[i]]);
             }
             console.log("Start ", start);
             console.log("End ", end);
             console.log("itemsPerPage ", this.itemsPerPage);
             console.log("Array ", tempArr);
-            this.currentPage += itemsPerPage;
-//            this.lastIndex += this.itemsPerPage;
-//            this.itemsPerPage = this.lastIndex * itemsPerPage;
+            if (!tempArr.length) return false;
+            this.currentPage += this.itemsPerPage;
+            displayData(tempArr);
+        },
+        prevResults: function () {
+            var tempArr = [];
+            if (!tempArr.length) return false;
+            this.currentPage -= this.itemsPerPage;
+            var start = this.currentPage;
+            var end = this.itemsPerPage + this.currentPage;
+            for (var i = this.itemsPerPage + this.currentPage; i > this.currentPage && i >= 0; i--) {
+                tempArr.push(data[[i]]);
+            }
+            console.log("Start ", end);
+            console.log("End ", start);
+            console.log("itemsPerPage ", this.itemsPerPage);
+            console.log("Array ", tempArr);
+            displayData(tempArr)
+        },
+        createPages: function () {
+            var str = "";
+            for (var i = 0; i < data.length; i++) {
+                str += "<option value='" + (i + 1) + "'>" + (i + 1) + "</option> "
+            }
+            document.getElementById("pagination-pages").innerHTML = str;
         }
     };
     ns.initApp = init;
