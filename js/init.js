@@ -169,7 +169,6 @@ var PayU = {};
         totalItems: data.length,
         totalPages: 0,
         currentPage: 0,
-        lastIndex: 0,
         list: [],
         currentResults: function (array) {
             var tempArr = [];
@@ -180,6 +179,12 @@ var PayU = {};
             }
             displayData(tempArr);
             this.list = tempArr;
+            if (tempArr.length === array.length) {
+                this.disableNextBtn();
+                this.disablePrevBtn();
+            } else {
+                this.enableNextBtn();
+            }
             console.log("Start ", start);
             console.log("End ", end);
             console.log("itemsPerPage ", this.itemsPerPage);
@@ -240,7 +245,7 @@ var PayU = {};
             }
             document.getElementById("pagination-pages").innerHTML = str;
             document.getElementById("prev").setAttribute("disabled", "disabled");
-            pagination.currentResults(getFilteredData(data, selectedStatus));
+            pagination.currentResults(getFilteredData(array, selectedStatus));
         },
         enableNextBtn: function () {
             document.getElementById("next").removeAttribute("disabled", "disabled");
