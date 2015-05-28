@@ -51,6 +51,7 @@ var PayU = {};
         document.getElementById("payment-status").addEventListener("change", function () {
             selectedStatus = this.value;
             var filteredList = getFilteredData(data, selectedStatus);
+            pagination.currentPage=0;
             pagination.itemsPerPage = filteredList.length;
             pagination.currentResults(filteredList);
             pagination.createPages(filteredList)
