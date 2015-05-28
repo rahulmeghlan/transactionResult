@@ -23,7 +23,7 @@ var PayU = {};
         // handle click event on payment-id
         document.getElementById("payment-id").addEventListener("click", function () {
 //            sortData(getFilteredData(data, selectedStatus), "paymentId", isPaymentDesc ? "desc" : "asc");
-            displayData(getFilteredData(data, selectedStatus).sort(function (a, b) {
+            displayData(pagination.list.sort(function (a, b) {
                 return (isPaymentDesc) ? b.paymentId - a.paymentId : a.paymentId - b.paymentId;
             }));
             isPaymentDesc = !isPaymentDesc;
@@ -31,7 +31,7 @@ var PayU = {};
 
         // handle click event on orderDate
         document.getElementById("date").addEventListener("click", function () {
-            sortData(getFilteredData(data, selectedStatus), "orderDate", isDateDesc ? "desc" : "asc");
+            sortData(pagination.list, "orderDate", isDateDesc ? "desc" : "asc");
             /*displayData(getFilteredData(data, selectedStatus).sort(function (a, b) {
              return (isDateDesc) ? b.orderDate - a.orderDate : a.orderDate - b.orderDate;
              }));*/
@@ -41,7 +41,7 @@ var PayU = {};
         // handle click event on amount
         document.getElementById("amount").addEventListener("click", function () {
 //            sortData(getFilteredData(data, selectedStatus), "amount", isAmountDesc ? "desc" : "asc");
-            displayData(getFilteredData(data, selectedStatus).sort(function (a, b) {
+            displayData(pagination.list.sort(function (a, b) {
                 return (isAmountDesc) ? b.amount - a.amount : a.amount - b.amount;
             }));
             isAmountDesc = !isAmountDesc;
@@ -170,9 +170,7 @@ var PayU = {};
         totalPages: 0,
         currentPage: 0,
         lastIndex: 0,
-        setPaginationValues: function () {
-            this.totalPages = this.totalItems / this.itemsPerPage;
-        },
+        list: [],
         currentResults: function (array) {
             var tempArr = [];
             var start = this.currentPage;
@@ -181,6 +179,7 @@ var PayU = {};
                 tempArr.push(array[i]);
             }
             displayData(tempArr);
+            this.list = tempArr;
             console.log("Start ", start);
             console.log("End ", end);
             console.log("itemsPerPage ", this.itemsPerPage);
@@ -200,6 +199,7 @@ var PayU = {};
             console.log("itemsPerPage ", this.itemsPerPage);
             console.log("Array ", tempArr);
             displayData(tempArr);
+            this.list = tempArr;
             if (this.itemsPerPage + this.currentPage >= getFilteredData(data, selectedStatus).length) {
                 this.disableNextBtn();
                 return false;
@@ -222,6 +222,7 @@ var PayU = {};
             console.log("End ", end);
             console.log("itemsPerPage ", this.itemsPerPage);
             console.log("Array ", tempArr);
+            this.list = tempArr;
             displayData(tempArr.reverse());
             if (!end) {
                 this.disablePrevBtn();

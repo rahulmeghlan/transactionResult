@@ -9,10 +9,15 @@
 <div class="container">
     <h1>Transactions Result Page</h1>
     <hr />
-    <div class="row">
-        <div class="col-md-6"><select id="payment-status" class="form-control"></select></div>
+    <div class="row select-boxes">
+        <div class="col-md-6">
+            <label for="payment-status">Payment Status</label>
+            <select id="payment-status" name="payment-status" class="form-control"></select>
+        </div>
 
-        <div class="col-md-6"><select id="pagination-pages" class="form-control"></select></div>
+        <div class="col-md-6">
+            <label for="pagination-pages">Items Per Page</label>
+            <select id="pagination-pages" name="pagination-pages" class="form-control"></select></div>
     </div>
     <div class="row">
         <table class="table table-striped">
