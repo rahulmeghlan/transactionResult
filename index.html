@@ -8,6 +8,11 @@
 <body>
 <div class="container">
     <div class="row">
+        <div class="col-md-6"><select id="payment-status" class="form-control"></select></div>
+
+        <div class="col-md-6"><select id="pagination-pages" class="form-control"></select></div>
+    </div>
+    <div class="row">
         <table class="table table-striped">
             <thead>
             <tr>
@@ -25,12 +30,9 @@
         </table>
     </div>
 
-    <select id="payment-status"></select>
 
-    <select id="pagination-pages"></select>
-
-    <input type="button" id="prev" value="Prev"/>
-    <input type="button" id="next" value="Next"/>
+    <input type="button" class="form-control" id="prev" value="Prev"/>
+    <input type="button" class="form-control" id="next" value="Next"/>
 
 </div>
 <script type="text/javascript" src="js/data.js"></script>
