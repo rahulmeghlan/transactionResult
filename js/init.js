@@ -50,7 +50,7 @@ var PayU = {};
         // handle click event on payment-status
         document.getElementById("payment-status").addEventListener("change", function () {
             selectedStatus = this.value;
-            displayData(getFilteredData(data, selectedStatus));
+            pagination.currentResults(getFilteredData(data, selectedStatus));
         }, false);
 
         // handle click event on pagination-count
@@ -197,6 +197,7 @@ var PayU = {};
             console.log("End ", end);
             console.log("itemsPerPage ", this.itemsPerPage);
             console.log("Array ", tempArr);
+            displayData(tempArr);
             if (this.itemsPerPage + this.currentPage >= getFilteredData(data, selectedStatus).length) {
                 this.disableNextBtn();
                 return false;
@@ -205,7 +206,6 @@ var PayU = {};
              document.getElementById("next").setAttribute("disabled", "disabled")
              return false;
              }*/
-            displayData(tempArr);
         },
         prevResults: function (array) {
             this.currentPage -= this.itemsPerPage;
