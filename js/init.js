@@ -1,7 +1,6 @@
 var PayU = {};
-(function (ns, tempData) {
-    //todo : rather than changing the origin value of data, store the value of data in another variable
-    var data = tempData.slice();  // Save a copy of the data passed.
+(function (ns, dataSet) {
+    var data = dataSet.slice();  // Save a copy of the data passed.
     var selectedStatus = "all";
     /**
      *  init : This function is used to initialize the ns level variables and functions
@@ -10,6 +9,7 @@ var PayU = {};
         bindEvents();
         changeToDateType(data);
         setSelectionTypes(data);
+        displayData(data);
         pagination.createPages();
     };
     /**
@@ -22,19 +22,28 @@ var PayU = {};
 
         // handle click event on payment-id
         document.getElementById("payment-id").addEventListener("click", function () {
-            sortData(getFilteredData(data, selectedStatus), "paymentId", isPaymentDesc ? "desc" : "asc");
+//            sortData(getFilteredData(data, selectedStatus), "paymentId", isPaymentDesc ? "desc" : "asc");
+            displayData(getFilteredData(data, selectedStatus).sort(function (a, b) {
+                return (isPaymentDesc) ? b.paymentId - a.paymentId : a.paymentId - b.paymentId;
+            }));
             isPaymentDesc = !isPaymentDesc;
         }, false);
 
         // handle click event on orderDate
         document.getElementById("date").addEventListener("click", function () {
             sortData(getFilteredData(data, selectedStatus), "orderDate", isDateDesc ? "desc" : "asc");
+            /*displayData(getFilteredData(data, selectedStatus).sort(function (a, b) {
+             return (isDateDesc) ? b.orderDate - a.orderDate : a.orderDate - b.orderDate;
+             }));*/
             isDateDesc = !isDateDesc;
         }, false);
 
         // handle click event on amount
         document.getElementById("amount").addEventListener("click", function () {
-            sortData(getFilteredData(data, selectedStatus), "amount", isAmountDesc ? "desc" : "asc");
+//            sortData(getFilteredData(data, selectedStatus), "amount", isAmountDesc ? "desc" : "asc");
+            displayData(getFilteredData(data, selectedStatus).sort(function (a, b) {
+                return (isAmountDesc) ? b.amount - a.amount : a.amount - b.amount;
+            }));
             isAmountDesc = !isAmountDesc;
         }, false);
 
@@ -47,7 +56,7 @@ var PayU = {};
         // handle click event on pagination-count
         document.getElementById("pagination-pages").addEventListener("change", function () {
             pagination.itemsPerPage = parseInt(this.value);
-            pagination.nextResults(getFilteredData(data, selectedStatus));
+            pagination.currentResults(getFilteredData(data, selectedStatus));
         }, false);
 
         // handle click event on next pagination
@@ -154,7 +163,7 @@ var PayU = {};
      * pagination : This is the pagination component
      * */
     var pagination = {
-        itemsPerPage: 1,
+        itemsPerPage: 5,
         totalItems: data.length,
         totalPages: 0,
         currentPage: 0,
@@ -162,43 +171,85 @@ var PayU = {};
         setPaginationValues: function () {
             this.totalPages = this.totalItems / this.itemsPerPage;
         },
-        nextResults: function (array) {
+        currentResults: function (array) {
             var tempArr = [];
             var start = this.currentPage;
             var end = this.itemsPerPage + this.currentPage;
             for (var i = this.currentPage; i < this.itemsPerPage + this.currentPage && i < getFilteredData(data, selectedStatus).length; i++) {
                 tempArr.push(array[i]);
             }
+            displayData(tempArr);
             console.log("Start ", start);
             console.log("End ", end);
             console.log("itemsPerPage ", this.itemsPerPage);
             console.log("Array ", tempArr);
-            if (!tempArr.length) return false;
+        },
+        nextResults: function (array) {
             this.currentPage += this.itemsPerPage;
+            var tempArr = [];
+            var start = this.currentPage;
+            var end = this.itemsPerPage + this.currentPage;
+            for (var i = this.currentPage; i < this.itemsPerPage + this.currentPage && i < getFilteredData(data, selectedStatus).length; i++) {
+                tempArr.push(array[i]);
+            }
+            this.enablePrevBtn();
+            console.log("Start ", start);
+            console.log("End ", end);
+            console.log("itemsPerPage ", this.itemsPerPage);
+            console.log("Array ", tempArr);
+            if (this.itemsPerPage + this.currentPage >= getFilteredData(data, selectedStatus).length) {
+                this.disableNextBtn();
+                return false;
+            }
+            /*if (!tempArr.length) {
+             document.getElementById("next").setAttribute("disabled", "disabled")
+             return false;
+             }*/
             displayData(tempArr);
         },
         prevResults: function (array) {
-            var tempArr = [];
-            if (!tempArr.length) return false;
             this.currentPage -= this.itemsPerPage;
-            var start = this.currentPage;
-            var end = this.itemsPerPage + this.currentPage;
-            for (var i = this.itemsPerPage + this.currentPage; i > this.currentPage && i >= 0; i--) {
+            var tempArr = [];
+            var start = this.itemsPerPage + this.currentPage;
+            var end = this.currentPage;
+            this.enableNextBtn();
+            for (var i = start - 1; i >= end; i--) {
                 tempArr.push(array[i]);
             }
-            console.log("Start ", end);
-            console.log("End ", start);
+            console.log("Start ", start);
+            console.log("End ", end);
             console.log("itemsPerPage ", this.itemsPerPage);
             console.log("Array ", tempArr);
-            displayData(tempArr)
+            displayData(tempArr.reverse());
+            if (!end) {
+                this.disablePrevBtn();
+                return false;
+            }
         },
         createPages: function () {
             var str = "";
             for (var i = 0; i < data.length; i++) {
-                str += "<option value='" + (i + 1) + "'>" + (i + 1) + "</option> "
+                if (i + 1 === pagination.itemsPerPage) {
+                    str += "<option selected value='" + (i + 1) + "'>" + (i + 1) + "</option> ";
+                } else {
+                    str += "<option value='" + (i + 1) + "'>" + (i + 1) + "</option> ";
+                }
             }
             document.getElementById("pagination-pages").innerHTML = str;
-            pagination.nextResults(getFilteredData(data, selectedStatus));
+            document.getElementById("prev").setAttribute("disabled", "disabled");
+            pagination.currentResults(getFilteredData(data, selectedStatus));
+        },
+        enableNextBtn: function () {
+            document.getElementById("next").removeAttribute("disabled", "disabled");
+        },
+        disableNextBtn: function () {
+            document.getElementById("next").setAttribute("disabled", "disabled");
+        },
+        enablePrevBtn: function () {
+            document.getElementById("prev").removeAttribute("disabled", "disabled");
+        },
+        disablePrevBtn: function () {
+            document.getElementById("prev").setAttribute("disabled", "disabled");
         }
     };
     ns.initApp = init;
