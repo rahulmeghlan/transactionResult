@@ -10,7 +10,7 @@ var PayU = {};
         changeToDateType(data);
         setSelectionTypes(data);
         displayData(data);
-        pagination.createPages();
+        pagination.createPages(data);
     };
     /**
      *  bindEvents : This function is used to bind events
@@ -50,7 +50,9 @@ var PayU = {};
         // handle click event on payment-status
         document.getElementById("payment-status").addEventListener("change", function () {
             selectedStatus = this.value;
-            pagination.currentResults(getFilteredData(data, selectedStatus));
+            var filteredList = getFilteredData(data, selectedStatus);
+            pagination.currentResults(filteredList);
+            pagination.createPages(filteredList)
         }, false);
 
         // handle click event on pagination-count
@@ -84,8 +86,8 @@ var PayU = {};
      * */
     var setSelectionTypes = function (array) {
         var tempObj = {}, str = "<option value='all'>All</option> ";
-        for (var i = 0; i < dummydata.length; i++) {
-            tempObj[dummydata[i].paymentStatus] = "val";
+        for (var i = 0; i < data.length; i++) {
+            tempObj[data[i].paymentStatus] = "val";
         }
         for (var j in tempObj) {
             str += "<option value='" + j + "'>" + j + "</option>";
@@ -226,9 +228,9 @@ var PayU = {};
                 return false;
             }
         },
-        createPages: function () {
+        createPages: function (array) {
             var str = "";
-            for (var i = 0; i < data.length; i++) {
+            for (var i = 0; i < array.length; i++) {
                 if (i + 1 === pagination.itemsPerPage) {
                     str += "<option selected value='" + (i + 1) + "'>" + (i + 1) + "</option> ";
                 } else {
