@@ -2,32 +2,35 @@
 <html>
 <head>
     <title>Transactions Result Page</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
 </head>
 <body>
 <div class="container">
-    <table>
-        <thead>
-        <tr>
-            <th id="payment-id">PaymentID</th>
-            <th id="date">Order Date</th>
-            <th>Merchant ID</th>
-            <th>Customer Email</th>
-            <th id="amount">Amount</th>
-            <th>Payment Status</th>
-        </tr>
-        </thead>
-        <tbody>
+    <div class="row">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th id="payment-id">PaymentID</th>
+                <th id="date">Order Date</th>
+                <th>Merchant ID</th>
+                <th>Customer Email</th>
+                <th id="amount">Amount</th>
+                <th>Payment Status</th>
+            </tr>
+            </thead>
+            <tbody>
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
     <select id="payment-status"></select>
 
     <select id="pagination-pages"></select>
 
-    <input type="button" id="prev" value="Prev" />
-    <input type="button" id="next" value="Next" />
+    <input type="button" id="prev" value="Prev"/>
+    <input type="button" id="next" value="Next"/>
 
 </div>
 <script type="text/javascript" src="js/data.js"></script>
